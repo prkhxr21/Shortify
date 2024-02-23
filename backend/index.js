@@ -4,9 +4,11 @@ import morgan from 'morgan';
 import { dbConnect } from './db/dbConnect.js';
 import urlRoute from './routes/url.js';
 import userRoute from './routes/user.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const app = express();
-
+const port = process.env.PORT || 3000;
 // Connect to MongoDB
 dbConnect()
     .then((res) => {
@@ -29,6 +31,6 @@ app.use('/url', urlRoute);
 app.use('/user', userRoute);
 
 // Start server
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log('Server running on port 3000');
 });
