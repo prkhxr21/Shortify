@@ -1,118 +1,146 @@
+import { token } from 'morgan';
+import { getSignedJwtToken } from '../middleware/auth.js';
 import userModel from '../models/userSchema.js';
 import bcrypt from 'bcrypt';
 
 const saltRounds = 10;
 
-const functions = {
-    signup: async (req, res) => {
-        try {
-            const { username, password } = req.body;
-            if (!username || !password)
-                return res.status(200).send({
-                    code: 400,
-                    message: 'enter the all fields',
-                    success: false,
-                });
-            const exists = await userModel.findOne({ username: username });
-            if (exists)
-                return res.status(200).send({
-                    code: 400,
-                    message: 'User is already exists please try to login',
-                    success: true,
-                    user: exists,
-                });
-
-            const hashedPassword = await bcrypt.hash(password, saltRounds);
-            const User = new userModel({
-                username,
-                password: hashedPassword,
-            });
-
-            await User.save();
-            if (!User) {
-                return res.status(200).send({
-                    code: 400,
-                    message: 'User not created',
-                    success: false,
-                });
-            } else {
-                return res.status(200).send({
-                    code: 201,
-                    message: `User ${User.username} created successfully`,
-                    success: true,
-                    user: User,
-                });
-            }
-        } catch (error) {
-            return res.status(500).send({
-                code: 500,
-                message: 'Internal Server Error',
-                success: false,
+export const login = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const userInput = email;
+        const password = req.body.password;
+        if (!userInput || !password) {
+            res.json({
+                message: 'Username or email and password are required.',
             });
         }
-    },
+        const exists = await userModel.findOne({
+            $or: [{ username: userInput }, { email: userInput }],
+        });
 
-    login: async (req, res) => {
-        try {
-            const { username, email } = req.body;
-            const userInput = username || email;
-            const password = req.body.password;
-            if (!userInput || !password) {
-                res.json({
-                    message: 'Username or email and password are required.',
-                });
-            }
-            const exists = await userModel.findOne({
-                $or: [{ username: userInput }, { email: userInput }],
-            });
-            if (!exists) return res.json({ message: 'please try to signup' });
+        //since checked already with signup
+        // if (!exists) return res.json({ message: 'please try to signup' });
 
-            const passwordMatch = await bcrypt.compare(
-                password,
-                exists.password
-            );
-            if (!passwordMatch) {
-                return res.json({ message: 'Incorrect password.' });
-            }
-            return res.json({ message: 'logged in' });
-        } catch (error) {
-            res.status(500).send({
-                code: 500,
-                message: 'Internal Server Error',
-                success: false,
-            });
+        const passwordMatch = await bcrypt.compare(password, exists.password);
+        if (!passwordMatch) {
+            return res.json({ code: 400, message: 'Incorrect password.' });
         }
-    },
+        token = getSignedJwtToken({
+            email: exists.email,
+            id: exists._id,
+        });
 
-    getUserById: async (req, res) => {
-        try {
-            const username = req.params.username;
-            const user = await userModel
-                .findOne({ username: username })
-                .populate('theme')
-                .exec();
-            if (user) {
-                res.status(200).send({
-                    code: 200,
-                    message: 'User details getting successfully',
-                    docs: user,
-                    success: true,
-                });
-            } else {
-                res.status(400).send({
-                    code: 400,
-                    message: 'There is no user',
-                    success: false,
-                });
-            }
-        } catch (error) {
-            res.status(500).send({
-                code: 500,
-                message: 'Internal Server Error',
-                success: false,
-            });
-        }
-    },
+        return res.json({
+            email: exists.email,
+            id: exists._id,
+            message: 'User logged in',
+            token: token,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            code: 500,
+            message: 'Internal Server Error',
+            success: false,
+        });
+    }
 };
 
-export default functions;
+export const signup = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password)
+            return res.status(200).send({
+                code: 400,
+                message: 'enter the all fields',
+                success: false,
+            });
+        const exists = await userModel.findOne({ email: email });
+        if (exists) return await login(req, res);
+
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        const User = new userModel({
+            email,
+            password: hashedPassword,
+        });
+        const token = await getSignedJwtToken({
+            email: User.email,
+            id: User._id,
+        });
+
+        await User.save();
+        if (!User) {
+            return res.status(200).send({
+                code: 400,
+                message: 'User not created',
+                success: false,
+            });
+        } else {
+            return res.status(200).send({
+                code: 201,
+                message: `User ${User.email} created successfully`,
+                success: true,
+                user: User,
+                token: token,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({
+            code: 500,
+            message: 'Internal Server Error',
+            success: false,
+        });
+    }
+};
+
+export const getUserById = async (req, res) => {
+    try {
+        const username = req.params.username;
+        const user = await userModel
+            .findOne({ username: username })
+            .populate('theme')
+            .exec();
+        if (user) {
+            res.status(200).send({
+                code: 200,
+                message: 'User details getting successfully',
+                docs: user,
+                success: true,
+            });
+        } else {
+            res.status(400).send({
+                code: 400,
+                message: 'There is no user',
+                success: false,
+            });
+        }
+    } catch (error) {
+        res.status(500).send({
+            code: 500,
+            message: 'Internal Server Error',
+            success: false,
+        });
+    }
+};
+
+export const getUserWithToken = async (req, res) => {
+    try {
+        const user = await userModel.findById(req.user.id).exec();
+        if (user) {
+            res.status(200).send({
+                code: 200,
+                message: 'User details getting successfully',
+                docs: user,
+                success: true,
+            });
+        }
+    } catch (error) {
+        res.status(500).send({
+            code: 500,
+            message: 'Internal Server Error',
+            success: false,
+        });
+    }
+};
