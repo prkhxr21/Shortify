@@ -5,7 +5,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 
 const Output = ({ data, show }) => {
-    console.log(data);
+    // console.log(data);
     const [copied, setCopied] = useState(false);
     var host = window.location.protocol + '//' + window.location.host;
     const handleCopy = (e) => {
@@ -50,7 +50,7 @@ const Output = ({ data, show }) => {
                     }}
                     // readOnly
                 >
-                    https://localhost:3000/
+                    {host}/
                     <span
                         style={{
                             color: '#ffffff',
@@ -120,7 +120,7 @@ const Output = ({ data, show }) => {
 };
 
 Output.propTypes = {
-    data: propTypes.string,
+    data: propTypes.any,
     show: propTypes.string,
 };
 
