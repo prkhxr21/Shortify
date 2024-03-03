@@ -1,3 +1,8 @@
+import { useState } from 'react';
+// import { useDispatch, useSelector } from 'react-redux';
+// import Cookies from 'js-cookie';
+// import { addNewUser } from '../store/actions/userAction';
+import { useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -11,6 +16,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+// import { CircularProgress } from '@mui/material';
 
 function Copyright(props) {
     return (
@@ -33,14 +39,48 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignIn() {
+    // const { userDetails, isLoading, isError } = useSelector(
+    //     (state) => state.user
+    // );
+    // const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [rememberMe, setRememberMe] = useState(false);
+    const [error, setError] = useState(false);
+
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        // const user = {
+        //     email: data.get('email'),
+        //     password: data.get('password'),
+        // };
+        // dispatch(addNewUser(user));
+        if (
+            data.get('email') === 'user@email.com' &&
+            data.get('password') === 'User@123'
+        ) {
+            window.localStorage.setItem('authorized', 'true');
+            navigate('/shortURL');
+            setError(false);
+        } else {
+            setError(true);
+        }
     };
+
+    // useEffect(() => {
+    //     const expiry = rememberMe === true ? 7 : 1;
+    //     if (
+    //         userDetails !== null &&
+    //         userDetails?.token !== undefined &&
+    //         userDetails?.token !== 'undefined'
+    //     ) {
+    //         Cookies.set('access_token', userDetails?.token, {
+    //             expires: expiry,
+    //         });
+    //     }
+    // }, [rememberMe, userDetails]);
+
+    // console.log(userDetails, isLoading, isError);
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -80,7 +120,8 @@ export default function SignIn() {
                             required
                             fullWidth
                             id='email'
-                            label='Email Address'
+                            // label='Email Address'
+                            placeholder='user@email.com'
                             name='email'
                             autoComplete='email'
                             autoFocus
@@ -90,7 +131,8 @@ export default function SignIn() {
                             required
                             fullWidth
                             name='password'
-                            label='Password'
+                            // label='Password'
+                            placeholder='User@123'
                             type='password'
                             id='password'
                             autoComplete='current-password'
@@ -99,6 +141,9 @@ export default function SignIn() {
                             control={
                                 <Checkbox value='remember' color='primary' />
                             }
+                            onChange={() => {
+                                setRememberMe(!rememberMe);
+                            }}
                             label='Remember me'
                         />
                         <Button
@@ -111,9 +156,20 @@ export default function SignIn() {
                         </Button>
                         <Grid container>
                             <Grid item xs>
-                                <Link href='#' variant='body2'>
-                                    Forgot password?
-                                </Link>
+                                {
+                                    //userDetails !== null &&
+                                    //userDetails?.code === 400 &&
+                                    error === true && (
+                                        <Typography
+                                            component='p'
+                                            variant='p'
+                                            color={'red'}
+                                        >
+                                            {/* {userDetails.message} */}
+                                            please use given credentials
+                                        </Typography>
+                                    )
+                                }
                             </Grid>
                             {/* <Grid item>
                                 <Link href='#' variant='body2'>
