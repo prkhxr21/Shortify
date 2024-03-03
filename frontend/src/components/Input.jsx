@@ -45,7 +45,7 @@ const InputHandler = ({ handle }) => {
             dispatch(getAnalyticsAction(shortId));
         }
     };
-    
+
     // console.log(shortId, analytics, isLoading, isError);
     if (isError === true) {
         return <h1>Something went wrong</h1>;
@@ -100,8 +100,8 @@ const InputHandler = ({ handle }) => {
                         id='url'
                         placeholder={
                             handle === 'URL'
-                                ? 'https://enter.your.url'
-                                : 'https://enter.your.shorturl'
+                                ? 'Enter the link here'
+                                : 'Enter the link or id here'
                         }
                         name='url'
                         autoFocus
