@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const backend_url = import.meta.env.VITE_BACKEND_URL;
+
 export const createShortId = async (url) => {
-    const response = await axios.post('http://localhost:3000/url', {
+    const response = await axios.post(`${backend_url}/url`, {
         url,
     });
 
@@ -13,13 +15,11 @@ export const createShortId = async (url) => {
 };
 
 export const getLongUrl = async (shortId) => {
-    const response = await axios.get(`http://localhost:3000/url/${shortId}`);
+    const response = await axios.get(`${backend_url}/url/${shortId}`);
     return response;
 };
 
 export const getAnalytics = async (shortId) => {
-    const response = await axios.get(
-        `http://localhost:3000/url/analytics/${shortId}`
-    );
+    const response = await axios.get(`${backend_url}/url/analytics/${shortId}`);
     return response;
 };
