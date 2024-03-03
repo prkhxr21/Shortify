@@ -59,6 +59,11 @@ function Navbar() {
         // setAnchorElNav(null);
     };
 
+    const handleLogout = () => {
+        window.localStorage.setItem('authorized', 'false');
+        navigate('/');
+    };
+
     return (
         <AppBar
             style={{
@@ -206,7 +211,11 @@ function Navbar() {
                             {settings.map((setting) => (
                                 <MenuItem
                                     key={setting}
-                                    onClick={handleCloseUserMenu}
+                                    onClick={
+                                        setting === 'Logout'
+                                            ? handleLogout
+                                            : handleCloseUserMenu
+                                    }
                                 >
                                     <Typography textAlign='center'>
                                         {setting}
