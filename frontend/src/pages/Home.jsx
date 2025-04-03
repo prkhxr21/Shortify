@@ -24,7 +24,7 @@ const Home = ({ handle }) => {
                 }}
             >
                 {handle === 'URL'
-                    ? 'Create your own ShortURL'
+                    ? 'Create your own URL'
                     : 'Get URL Analytics'}
             </Typography>
             <InputHandler handle={handle} />

@@ -1,17 +1,18 @@
 import axios from 'axios';
 
-const backend_url = import.meta.env.VITE_BACKEND_URL;
+const backend_url = 'http://localhost:3000';
 
 export const createShortId = async (url) => {
+    try{
     const response = await axios.post(`${backend_url}/url`, {
         url,
     });
 
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(response.data);
-        }, 1000);
-    });
+    return response.data;
+    }catch (error) {
+        console.error("Error creating short ID:", error.response?.data || error.message);
+        throw error;
+    }
 };
 
 export const getLongUrl = async (shortId) => {

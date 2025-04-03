@@ -22,7 +22,8 @@ const InputHandler = ({ handle }) => {
         try {
             new URL(string);
             return true;
-        } catch (_) {
+        } catch (error) {
+            console.log(error);
             return false;
         }
     }
@@ -118,7 +119,7 @@ const InputHandler = ({ handle }) => {
                         sx={{ mt: 2, mb: 3 }}
                     >
                         {handle === 'URL'
-                            ? 'Create Magic ✨'
+                            ? 'Create URL'
                             : 'Get Analytics 📈'}
                     </Button>
                     <Grid container sx={{ mb: 2 }}>

@@ -16,7 +16,7 @@ function App() {
     useEffect(() => {
         if (access === 'true') {
             setAuthorized(true);
-            navigate('/shortURL');
+            navigate('/shortify');
         } else {
             setAuthorized(false);
         }
@@ -56,7 +56,7 @@ function App() {
                     path='/'
                     element={authorized ? <Home handle='URL' /> : <SignIn />}
                 />
-                <Route path='/shortURL' element={<Home handle='URL' />} />
+                <Route path='/shortify' element={<Home handle='URL' />} />
                 <Route
                     path='/analytics'
                     element={<Home handle='Analytics' />}

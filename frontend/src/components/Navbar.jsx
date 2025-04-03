@@ -14,7 +14,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import LinkIcon from '@mui/icons-material/Link';
 
-const pages = ['Analytics', 'Short Url', 'GitHub'];
+const pages = ['Analytics', 'Shortify', 'GitHub'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function Navbar() {
@@ -43,13 +43,13 @@ function Navbar() {
                 return () => {
                     navigate('/analytics');
                 };
-            case 'Short Url':
+            case 'Shortify':
                 return () => {
-                    navigate('/shortURL');
+                    navigate('/shortify');
                 };
             case 'GitHub':
                 return () => {
-                    window.location.href = 'https://github.com/IngoleShubham';
+                    window.location.href = 'https://github.com/prkhxr21';
                 };
             default:
                 return () => {
@@ -82,7 +82,7 @@ function Navbar() {
                         variant='h6'
                         noWrap
                         component='a'
-                        href='https://github.com/IngoleShubham/shortURL'
+                        href='https://github.com/prkhxr21/Shortify'
                         sx={{
                             mr: 2,
                             display: { xs: 'none', md: 'flex' },
@@ -93,7 +93,7 @@ function Navbar() {
                             textDecoration: 'none',
                         }}
                     >
-                        ShortURL
+                        Shortify
                     </Typography>
 
                     <Box

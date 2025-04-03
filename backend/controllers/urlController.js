@@ -53,7 +53,14 @@ export async function handleRedirect(req, res) {
             return res.status(404).json({ error: 'Entry not found' });
         }
 
-        res.json({ redirectUrl: entry.redirectURL });
+        let redirectUrl = entry.redirectURL;
+
+        // Ensure the redirect URL has the correct protocol
+        if (!/^https?:\/\//i.test(redirectUrl)) {
+            redirectUrl = 'http://' + redirectUrl;
+        }
+
+        res.redirect(redirectUrl);
     } catch (error) {
         console.error('Error updating URL:', error);
         res.status(500).json({ error: 'Internal server error' });
